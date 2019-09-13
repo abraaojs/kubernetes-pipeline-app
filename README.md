@@ -7,7 +7,6 @@ This Docker image is a example to create Flask web applications in Python 3 that
 
 This example is a simple example to create your own container and scale de processes with uWSGI ini file.
 
-GitHub repo: https://github.com/cirolini/Docker-Flask-uWSGI
 
 ## QuickStart
 
