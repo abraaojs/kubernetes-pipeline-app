@@ -8,33 +8,44 @@ podTemplate(label: 'mypod', containers: [
   ]
   ) {
 
-node('mypod') {
-    sh 'hostname'
-    sh 'hostname -i'
-    checkout scm
+    node('mypod') {
+        stage('Check running containers') {
+            container('docker') {
+                // example to show you can run docker commands when you mount the socket
+                sh 'hostname'
+                sh 'hostname -i'
+                sh 'docker ps'
+            }
+        }
+     stage('Clone repository') {
+            container('git') {
+                sh 'whoami'
+                sh 'hostname -i'
+                sh 'git clone -b master  https://github.com/abraaojs/kubernetes-pipeline-app.git'
 
-    // Pega o commit id para ser usado de tag (versionamento) na imagem
-    sh "git rev-parse --short HEAD > commit-id"
-    tag = readFile('commit-id').replace("\n", "").replace("\r", "")
+                    // Pega o commit id para ser usado de tag (versionamento) na imagem
+                sh "git rev-parse --short HEAD > commit-id"
+                tag = readFile('commit-id').replace("\n", "").replace("\r", "")
     
-    // configura o nome da aplicação, o endereço do repositório e o nome da imagem com a versão
-    appName = "app"
-    registryHost = "127.0.0.1:30400/"
-    imageName = "${registryHost}${appName}:${tag}"
-    
-    // Configuramos os estágios
-    
-    stage "Build"
+                // configura o nome da aplicação, o endereço do repositório e o nome da imagem com a versão
+                appName = "app"
+                registryHost = "127.0.0.1:30400/"
+                imageName = "${registryHost}${appName}:${tag}"
+            }
+        }
 
-        def customImage = docker.build("${imageName}")
+     stage('Build') {
+                sh 'hostname'
+                sh 'hostname -i'
+                def customImage = docker.build("${imageName}")
 
-    stage "Push"
-
+     }
+      
+    stage('Push') {
         customImage.push()
+    }
 
-
-    stage "Deploy PROD"
-
+    stage ('Deploy PROD') {
         input "Deploy to PROD?"
         customImage.push('latest')
         sh "kubectl apply -f https://raw.githubusercontent.com/cirolini/Docker-Flask-uWSGI/master/k8s_app.yaml"
