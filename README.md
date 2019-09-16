@@ -13,7 +13,7 @@ This example is a simple example to create your own container and scale de proce
 You can run this container direct in shell like:
 
 ```
-docker run -p 5000:5000 cirolini/flask-uwsgi:latest
+docker run -p 5000:5000 abraaojs/flask-uwsgi:latest
 ```
 
 And test in a curl command ou your browser like this:
