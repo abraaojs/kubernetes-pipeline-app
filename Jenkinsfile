@@ -6,11 +6,13 @@ podTemplate(label: 'mypod', containers: [
   volumes: [
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
   ]
+  ) {
 
-    node('mypod') {
-        stage('Check running containers') {
-         container('docker') {
-         checkout scm
+node('mypod') {
+    sh 'hostname'
+    sh 'hostname -i'
+    checkout scm
+
     // Pega o commit id para ser usado de tag (versionamento) na imagem
     sh "git rev-parse --short HEAD > commit-id"
     tag = readFile('commit-id').replace("\n", "").replace("\r", "")
@@ -39,4 +41,5 @@ podTemplate(label: 'mypod', containers: [
         sh "kubectl set image deployment app app=${imageName} --record"
         sh "kubectl rollout status deployment/app"
     }
+
 }
