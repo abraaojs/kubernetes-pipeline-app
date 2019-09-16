@@ -38,4 +38,5 @@ podTemplate(label: 'mypod', containers: [
         sh "kubectl apply -f https://raw.githubusercontent.com/cirolini/Docker-Flask-uWSGI/master/k8s_app.yaml"
         sh "kubectl set image deployment app app=${imageName} --record"
         sh "kubectl rollout status deployment/app"
+    }
 }
