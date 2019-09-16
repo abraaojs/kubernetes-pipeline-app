@@ -21,9 +21,8 @@ podTemplate(label: 'mypod', containers: [
             container('git') {
                 sh 'whoami'
                 sh 'hostname -i'
-                sh 'git clone -b master  https://github.com/abraaojs/kubernetes-pipeline-app.git'
 
-                    // Pega o commit id para ser usado de tag (versionamento) na imagem
+                 // Pega o commit id para ser usado de tag (versionamento) na imagem
                 sh "git rev-parse --short HEAD > commit-id"
                 tag = readFile('commit-id').replace("\n", "").replace("\r", "")
     
@@ -53,4 +52,5 @@ podTemplate(label: 'mypod', containers: [
         sh "kubectl rollout status deployment/app"
     }
 
+  }
 }
